@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/map/html">
+        <file>gaode_api/gaode_map.html</file>
+        <file>gaode_api/qwebchannel.js</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+  <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
+  <style>
+    html,
+    body,
+    #container {
+      width: 100%;
+      height: 100%;
+    }
+
+    #map-zoom, #map-center {
+      color: #028w8d1;
+    }
+  </style>
+  <title>地图级别与中心点</title>
+  <script language="JavaScript" type="text/javascript" src="qwebchannel.js"></script>
+  <script type="text/javascript" src="https://cache.amap.com/lbs/static/addToolbar.js"></script>
+</head>
+
+<body>
+  <div id="container" tabindex="0"></div>
+  <div class="info">
+    <h4>GPS数据显示</h4>
+    <!--<p>当前级别：<span id="map-zoom">11</span></p>-->
+    <p>当前中心点：<span id="map-center">116.319878,39.925939</span></p>
+  </div>
+  <script src="https://webapi.amap.com/maps?v=2.0&key=10b59b8908f83a8191c51bcbb6f070aa"></script>
+  <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
+  <script>
+    //初始化地图
+    var map = new AMap.Map('container', {
+      resizeEnable: true, //是否监控地图容器尺寸变化
+      viewMode: '2D',//使用2D模式
+      zoom: 18, //初始地图级别
+      center: [116.319878,39.925939], //初始地图中心点
+    });
+
+    //建立channel通道，与QT进行数据交互
+    new QWebChannel(qt.webChannelTransport,
+        function(channel){
+            window.bridge=channel.objects.person;
+    });
+    //更新信息函数，完成经纬度的数据交互
+    var updateInfo = function(lon,lat)
+    {
+        window.bridge.Latitude_longitude_function(lon,lat);
+    }
+    //实验函数，单击地图上的一点，能够获得该点的经纬度坐标，然后将数据发送给QT C++代码
+    map.on('click', function(e) {
+        updateInfo( e.lnglat.getLng(),e.lnglat.getLat());
+    });
+
+    //显示地图层级与中心点信息
+    /*
+    function logMapinfo(){
+      var center = map.getCenter(); //获取当前地图中心位置
+      document.querySelector("#map-center").innerText = center.toString();
+    };
+
+    //绑定地图移动与缩放事件
+    map.on('moveend', logMapinfo);
+    map.on('zoomend', logMapinfo);
+    */
+
+    //绘制路径，通过绘制圆点来完成
+    var circle = new AMap.Circle({
+        center: new AMap.LngLat(116.319878,39.925939),  // 圆心位置
+        radius: 3, // 圆半径
+        fillColor: 'red',   // 圆形填充颜色
+        strokeColor: '#fff', // 描边颜色
+        strokeWeight: 2, // 描边宽度
+    });
+    //绘制圆点
+    map.add(circle);
+
+
+    //添加必要的地图控件
+    // 同时引入工具条插件，比例尺插件和鹰眼插件
+    AMap.plugin([
+        'AMap.Scale',
+    ], function(){
+        // 在图面添加比例尺控件，展示地图在当前层级和纬度下的比例尺
+        map.addControl(new AMap.Scale());
+    });
+
+    //添加鹰眼控件，但是目前这个控件还没有添加成功，原因未知
+    map.plugin(["AMap.OverView"],function(){
+        view = new AMap.OverView();
+        map.addControl(view);
+    });
+  </script>
+  <script type="text/javascript" src="https://webapi.amap.com/demos/js/liteToolbar.js"></script>
+</body>
+</html>

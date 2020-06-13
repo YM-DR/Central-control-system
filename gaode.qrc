@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>gaode_api/gaode_getcenter.html</file>
+        <file>gaode_api/qwebchannel.js</file>
+        <file>Process.qml</file>
+        <file>ProcessForm.ui.qml</file>
+    </qresource>
+</RCC>

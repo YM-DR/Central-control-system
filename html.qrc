@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/gaode_api" lang="html">
+        <file>gaode_api/gaode_map.html</file>
+    </qresource>
+</RCC>
